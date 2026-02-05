@@ -104,14 +104,14 @@ dotnet run
 ```
 
 The API will be available at:
-- HTTP: `http://localhost:5000`
-- HTTPS: `https://localhost:5001`
+- HTTP: `http://localhost:5001`
+- HTTPS: `https://localhost:7037`
 
 ### Access OpenAPI Documentation
 
 When running in development mode, you can access the OpenAPI specification at:
 ```
-http://localhost:5000/openapi/v1.json
+http://localhost:5001/openapi/v1.json
 ```
 
 ## Configuration
@@ -149,10 +149,10 @@ The API can be tested using:
 
 ```bash
 # Get all events
-curl http://localhost:5000/api/events
+curl http://localhost:5001/api/events
 
 # Get specific event
-curl http://localhost:5000/api/events/1
+curl http://localhost:5001/api/events/1
 ```
 
 ## Future Enhancements

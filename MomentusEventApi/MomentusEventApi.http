@@ -1,6 +1,19 @@
 @MomentusEventApi_HostAddress = http://localhost:5001
 
-GET {{MomentusEventApi_HostAddress}}/weatherforecast/
+# Get all events
+GET {{MomentusEventApi_HostAddress}}/api/events
+Accept: application/json
+
+###
+
+# Get specific event by ID
+GET {{MomentusEventApi_HostAddress}}/api/events/1
+Accept: application/json
+
+###
+
+# Get non-existent event (test 404)
+GET {{MomentusEventApi_HostAddress}}/api/events/999
 Accept: application/json
 
 ###
