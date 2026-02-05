@@ -90,7 +90,7 @@ GET /api/events/{id}
 Returns details for a specific event.
 
 **Parameters:**
-- `id` (string): The event ID
+- `id` (int): The event ID (integer)
 
 **Response:** 200 OK
 ```json

@@ -43,11 +43,11 @@ public class EventsController : ControllerBase
     /// </summary>
     /// <param name="id">The event ID</param>
     /// <returns>Event details</returns>
-    [HttpGet("{id}")]
+    [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(Event), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<ActionResult<Event>> GetEventById(string id)
+    public async Task<ActionResult<Event>> GetEventById(int id)
     {
         try
         {

@@ -34,7 +34,7 @@ public class MomentusEventService : IMomentusEventService
         }
     }
 
-    public async Task<Event?> GetEventByIdAsync(string id)
+    public async Task<Event?> GetEventByIdAsync(int id)
     {
         try
         {
@@ -44,7 +44,7 @@ public class MomentusEventService : IMomentusEventService
             // In production: var response = await _httpClient.GetFromJsonAsync<Event>($"{_momentusApiBaseUrl}/events/{id}");
             
             var events = GetMockEvents();
-            return await Task.FromResult(events.FirstOrDefault(e => e.EventID?.ToString() == id));
+            return await Task.FromResult(events.FirstOrDefault(e => e.EventID == id));
         }
         catch (Exception ex)
         {
