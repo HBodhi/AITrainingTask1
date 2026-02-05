@@ -1,0 +1,93 @@
+@MomentusEventApi_HostAddress = http://localhost:5001
+
+###############################################
+# EVENTS API
+###############################################
+
+# Get all events
+GET {{MomentusEventApi_HostAddress}}/api/events
+Accept: application/json
+
+###
+
+# Get specific event by ID
+GET {{MomentusEventApi_HostAddress}}/api/events/1
+Accept: application/json
+
+###
+
+# Get non-existent event (test 404)
+GET {{MomentusEventApi_HostAddress}}/api/events/999
+Accept: application/json
+
+###
+
+# Search all events (no filter)
+GET {{MomentusEventApi_HostAddress}}/api/events/search
+Accept: application/json
+
+###
+
+# Search events with filter
+GET {{MomentusEventApi_HostAddress}}/api/events/search?filter=Conference
+Accept: application/json
+
+###
+
+# Search events with OData filter (for real Ungerboeck API)
+GET {{MomentusEventApi_HostAddress}}/api/events/search?filter=Description eq 'Tech Conference 2026'
+Accept: application/json
+
+###
+
+###############################################
+# SERVICE ORDERS API
+###############################################
+
+# Get all service orders for a specific event
+GET {{MomentusEventApi_HostAddress}}/api/serviceorders/event/1
+Accept: application/json
+
+###
+
+# Get specific service order by order number
+GET {{MomentusEventApi_HostAddress}}/api/serviceorders/1001
+Accept: application/json
+
+###
+
+# Get non-existent service order (test 404)
+GET {{MomentusEventApi_HostAddress}}/api/serviceorders/9999
+Accept: application/json
+
+###
+
+# Search all service orders (no filter)
+GET {{MomentusEventApi_HostAddress}}/api/serviceorders/search
+Accept: application/json
+
+###
+
+# Search service orders with simple filter
+GET {{MomentusEventApi_HostAddress}}/api/serviceorders/search?filter=Catering
+Accept: application/json
+
+###
+
+# Search service orders with OData filter (for real Ungerboeck API)
+GET {{MomentusEventApi_HostAddress}}/api/serviceorders/search?filter=Account eq 'TECHCONF'
+Accept: application/json
+
+###
+
+# Search service orders by event (OData filter)
+GET {{MomentusEventApi_HostAddress}}/api/serviceorders/search?filter=Event eq 2
+Accept: application/json
+
+###
+
+# Search service orders by status (OData filter)
+GET {{MomentusEventApi_HostAddress}}/api/serviceorders/search?filter=OrderStatus eq 'A'
+Accept: application/json
+
+###
