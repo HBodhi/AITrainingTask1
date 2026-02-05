@@ -1,31 +1,36 @@
 # Momentus Event API
 
-A .NET 10 Web API that fetches event details from Momentus (formerly Ungerboeck).
+A .NET 10 Web API that fetches event details from Momentus (formerly Ungerboeck) using the official Ungerboeck.Api.SDK.
 
 ## Overview
 
-This API provides endpoints to retrieve event information from the Momentus platform. It includes endpoints to fetch all events or specific events by ID. The API uses the official `Ungerboeck.Api.Models` NuGet package for event model definitions.
+This API provides endpoints to retrieve event information from the Momentus/Ungerboeck platform. It uses the official `Ungerboeck.Api.Sdk` package to interact with the Ungerboeck API, providing full access to event management capabilities.
 
 ## Technology Stack
 
 - .NET 10
 - ASP.NET Core Web API
-- Ungerboeck.Api.Models (v1.253.1.4)
+- **Ungerboeck.Api.Sdk (v1.253.1.4)** - Official SDK for API interaction
+- Ungerboeck.Api.Models (v1.253.1.4) - Model definitions
 - OpenAPI/Swagger support
+- JWT Authentication for Ungerboeck API
 
 ## Project Structure
 
 ```
 MomentusEventApi/
 ├── Controllers/
-│   └── EventsController.cs      # API endpoints
+│   └── EventsController.cs           # API endpoints
 ├── Models/
-│   └── Event.cs                  # Event model (extends EventsModel from Ungerboeck.Api.Models)
+│   └── Event.cs                       # Event model (extends EventsModel)
 ├── Services/
-│   ├── IMomentusEventService.cs  # Service interface
-│   └── MomentusEventService.cs   # Service implementation
-├── Program.cs                     # Application entry point
-└── appsettings.json              # Configuration
+│   ├── IMomentusEventService.cs      # Service interface
+│   ├── MomentusEventService.cs       # Service implementation
+│   ├── IUngerboeckApiClientFactory.cs # Client factory interface
+│   └── UngerboeckApiClientFactory.cs  # Client factory implementation
+├── Program.cs                          # Application entry point
+├── appsettings.json                    # Configuration
+└── appsettings.Development.json        # Development configuration
 ```
 
 ## Event Model
@@ -116,6 +121,77 @@ Returns details for a specific event.
 }
 ```
 
+### Search Events
+```
+GET /api/events/search?filter={searchFilter}
+```
+Search for events using Ungerboeck OData-style search filter syntax.
+
+**Parameters:**
+- `filter` (string, optional): OData-style search filter
+
+**Filter Examples:**
+- `Description eq 'Tech Conference'` - Exact match
+- `Status eq '30'` - Search by status (30 = Firm)
+- `StartDate gt 2026-01-01` - Events starting after a date
+- Leave empty to return all events
+
+**Response:** 200 OK
+```json
+[
+  {
+    "eventID": 1,
+    "organization": "10",
+    "description": "Tech Conference 2026",
+    ...
+  }
+]
+```
+
+## Configuration
+
+### Ungerboeck API Setup
+
+Before using the API with real Ungerboeck data, you need to configure the connection. Update `appsettings.json`:
+
+```json
+{
+  "UngerboeckApi": {
+    "BaseUrl": "https://your-site.ungerboeck.com",
+    "ApiUserId": "YOUR_API_USER_ID",
+    "Secret": "your-secret-guid",
+    "Key": "your-key-guid",
+    "DefaultOrganization": "10"
+  }
+}
+```
+
+#### Getting API Credentials
+
+1. **Log in to Ungerboeck/Momentus**
+2. **Navigate to Main Menu → API Users**
+3. **Create or select an API User**
+4. **Get the credentials:**
+   - **API User ID**: Found in the API User details
+   - **Secret**: GUID found in the API User details
+   - **Key**: GUID from the Keys section (any one of the keys)
+   - **BaseUrl**: Your Ungerboeck site URL
+
+### Development Mode (Mock Data)
+
+For development and testing without Ungerboeck credentials, the API can use mock data. This is enabled by default in `appsettings.Development.json`:
+
+```json
+{
+  "UngerboeckApi": {
+    "UseMockData": true,
+    ...
+  }
+}
+```
+
+Set `UseMockData` to `false` to use the real Ungerboeck API.
+
 ## Running the Application
 
 ### Prerequisites
@@ -154,53 +230,12 @@ When running in development mode, you can access the OpenAPI specification at:
 http://localhost:5001/openapi/v1.json
 ```
 
-## Configuration
-
-The Momentus API configuration can be found in `appsettings.json`:
-
-```json
-{
-  "MomentusApi": {
-    "BaseUrl": "https://api.momentus.com",
-    "ApiKey": ""
-  }
-}
-```
-
-**Note:** The current implementation uses mock data for demonstration purposes. To connect to the actual Momentus API:
-1. Add your Momentus API key to the configuration
-2. Update the `MomentusEventService.cs` to uncomment the actual API calls
-3. Ensure you're using the correct version of Ungerboeck.Api.Models that matches your Momentus/Ungerboeck system version
-
-### Ungerboeck.Api.Models Version Compatibility
-
-This project uses **Ungerboeck.Api.Models v1.253.1.4**, which is compatible with Momentus/Ungerboeck version 25.3. The version number format is `1.XXX.Y.Z` where:
-- **XXX** represents the Ungerboeck/Momentus version (253 = version 25.3)
-- **Y.Z** represents the package build number
-
-**Important:** Always match your model package version to your Momentus/Ungerboeck API environment version to ensure compatibility. For example:
-- Version 1.231.x.x → Ungerboeck 23.1
-- Version 1.241.x.x → Ungerboeck 24.1  
-- Version 1.253.x.x → Ungerboeck 25.3
-
-To update the package version:
-```bash
-dotnet add package Ungerboeck.Api.Models --version [your-version]
-```
-
-## Development
-
-### Adding New Endpoints
-
-1. Add new methods to the `IMomentusEventService` interface
-2. Implement the methods in `MomentusEventService`
-3. Add corresponding controller actions in `EventsController`
-
-### Testing
+## Testing
 
 The API can be tested using:
 - Browser (for GET requests)
 - Postman or similar API testing tools
+- The included `MomentusEventApi.http` file with REST Client extensions
 - curl commands:
 
 ```bash
@@ -209,17 +244,129 @@ curl http://localhost:5001/api/events
 
 # Get specific event
 curl http://localhost:5001/api/events/1
+
+# Search events
+curl "http://localhost:5001/api/events/search?filter=Conference"
 ```
+
+## Package Version Compatibility
+
+This project uses **Ungerboeck.Api.Sdk v1.253.1.4**, which is compatible with Momentus/Ungerboeck version 25.3.
+
+The version number format is `1.XXX.Y.Z` where:
+- **XXX** represents the Ungerboeck/Momentus version (253 = version 25.3)
+- **Y.Z** represents the package build number
+
+**Important:** Always match your SDK package version to your Momentus/Ungerboeck environment version:
+- Version 1.231.x.x → Ungerboeck 23.1
+- Version 1.241.x.x → Ungerboeck 24.1  
+- Version 1.253.x.x → Ungerboeck 25.3 (Current)
+
+To update the package version:
+```bash
+dotnet add package Ungerboeck.Api.Sdk --version [your-version]
+dotnet add package Ungerboeck.Api.Models --version [your-version]
+```
+
+## Development
+
+### Using Mock Data for Development
+
+By default in development mode, the API uses mock data so you can develop and test without Ungerboeck credentials:
+
+1. Leave `UseMockData: true` in `appsettings.Development.json`
+2. The API will return sample event data
+3. All endpoints work normally with mock data
+
+### Connecting to Real Ungerboeck API
+
+To use the real Ungerboeck API:
+
+1. Update `appsettings.json` or `appsettings.Production.json` with your credentials
+2. Set `UseMockData: false`  
+3. Ensure your Ungerboeck API User has appropriate permissions
+4. Test connection with a simple GET request
+
+### Adding New Endpoints
+
+1. Add new methods to the `IMomentusEventService` interface
+2. Implement the methods in `MomentusEventService` using the SDK client
+3. Add corresponding controller actions in `EventsController`
+4. Update the `.http` file with examples
+
+### Example: Adding a New Method
+
+```csharp
+// 1. Add to IMomentusEventService
+Task<Event> AddEventAsync(Event newEvent);
+
+// 2. Implement in MomentusEventService
+public async Task<Event> AddEventAsync(Event newEvent)
+{
+    var client = _clientFactory.CreateClient();
+    var result = await Task.Run(() => 
+        client.Endpoints.Events.Add(newEvent));
+    return result;
+}
+
+// 3. Add controller action
+[HttpPost]
+public async Task<ActionResult<Event>> CreateEvent([FromBody] Event newEvent)
+{
+    var created = await _eventService.AddEventAsync(newEvent);
+    return CreatedAtAction(nameof(GetEventById), 
+        new { id = created.EventID }, created);
+}
+```
+
+## Troubleshooting
+
+### Authentication Errors
+
+If you receive authentication errors:
+1. Verify your API User credentials in Ungerboeck
+2. Ensure the API User is active
+3. Check that the Secret and Key GUIDs are correct
+4. Confirm your BaseUrl includes the correct domain
+
+### No Events Returned
+
+If searches return no events:
+1. Check the DefaultOrganization setting matches your org code
+2. Verify the API User has permissions to view events
+3. Try searching without a filter first
+4. Check Ungerboeck logs for API access attempts
 
 ## Future Enhancements
 
-- Implement actual Momentus API integration
-- Add authentication/authorization
-- Implement caching for improved performance
-- Add filtering, sorting, and pagination
-- Add unit and integration tests
-- Add search functionality
-- Implement event creation/updates (if supported by Momentus API)
+- Implement event creation/updates
+- Add function and order endpoints
+- Implement pagination for large result sets
+- Add caching for improved performance
+- Add comprehensive unit and integration tests
+- Implement batch operations
+- Add webhook support for real-time updates
+
+## Additional Resources
+
+- [Ungerboeck API Documentation](https://supportcenter.ungerboeck.com/hc/en-us/sections/115001365327-API-Basics)
+- [Ungerboeck SDK Examples](https://github.com/UngerboeckAPI/253)
+- [NuGet Package](https://www.nuget.org/packages/Ungerboeck.Api.Sdk/)
+
+## License
+
+This project is part of the AITrainingTask1 repository.
+
+```bash
+# Get all events
+curl http://localhost:5001/api/events
+
+# Get specific event
+curl http://localhost:5001/api/events/1
+
+# Search events
+curl "http://localhost:5001/api/events/search?filter=Conference"
+```
 
 ## License
 

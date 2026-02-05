@@ -171,6 +171,81 @@ public class MomentusEventService : IMomentusEventService
         }
     }
 
+    public async Task<IEnumerable<Event>> SearchEventsAsync(string searchFilter)
+    {
+        try
+        {
+            _logger.LogInformation("Searching events in Ungerboeck API for organization {Organization} with filter: {Filter}", 
+                _defaultOrganization, searchFilter);
+            
+            if (_useMockData)
+            {
+                _logger.LogDebug("Returning mock data");
+                var allEvents = GetMockEvents();
+                
+                // Simple filtering on mock data
+                if (string.IsNullOrEmpty(searchFilter))
+                    return allEvents;
+                
+                return allEvents.Where(e => 
+                    e.Description?.Contains(searchFilter, StringComparison.OrdinalIgnoreCase) == true ||
+                    e.Description1?.Contains(searchFilter, StringComparison.OrdinalIgnoreCase) == true ||
+                    e.Description2?.Contains(searchFilter, StringComparison.OrdinalIgnoreCase) == true
+                ).ToList();
+            }
+
+            // Use the SDK to search events
+            var client = _clientFactory.CreateClient();
+            
+            // Search with the provided filter
+            // If no filter provided, search for all events
+            var searchResponse = await Task.Run(() => 
+                client.Endpoints.Events.Search(_defaultOrganization, searchFilter ?? ""));
+            
+            var resultCount = searchResponse?.Results != null ? searchResponse.Results.Count() : 0;
+            _logger.LogInformation("Search returned {Count} events from Ungerboeck API", resultCount);
+            
+            if (searchResponse == null || searchResponse.Results == null)
+            {
+                _logger.LogWarning("No events found or null response from Ungerboeck API");
+                return new List<Event>();
+            }
+            
+            // Convert EventsModel to Event (our wrapper class)
+            return searchResponse.Results.Select(e => new Event
+            {
+                EventID = e.EventID,
+                Organization = e.Organization,
+                Description = e.Description,
+                Account = e.Account,
+                StartDate = e.StartDate,
+                EndDate = e.EndDate,
+                StartTime = e.StartTime,
+                EndTime = e.EndTime,
+                Status = e.Status,
+                Type = e.Type,
+                Category = e.Category,
+                Attendance = e.Attendance,
+                ForecastAttendance = e.ForecastAttendance,
+                ForecastRevenue = e.ForecastRevenue,
+                Description1 = e.Description1,
+                Description2 = e.Description2,
+                Coordinator = e.Coordinator,
+                Contact = e.Contact,
+                Class = e.Class,
+                Salesperson = e.Salesperson,
+                ActualRevenue = e.ActualRevenue,
+                OrderedRevenue = e.OrderedRevenue,
+                RevisedRevenue = e.RevisedRevenue
+            }).ToList();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error searching events from Ungerboeck API");
+            throw;
+        }
+    }
+
     private IEnumerable<Event> GetMockEvents()
     {
         // Mock data simulating Momentus event data using EventsModel structure

@@ -6,4 +6,5 @@ public interface IMomentusEventService
 {
     Task<IEnumerable<Event>> GetAllEventsAsync();
     Task<Event?> GetEventByIdAsync(int id);
+    Task<IEnumerable<Event>> SearchEventsAsync(string searchFilter);
 }

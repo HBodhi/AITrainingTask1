@@ -17,3 +17,21 @@ GET {{MomentusEventApi_HostAddress}}/api/events/999
 Accept: application/json
 
 ###
+
+# Search all events (no filter)
+GET {{MomentusEventApi_HostAddress}}/api/events/search
+Accept: application/json
+
+###
+
+# Search events with filter
+GET {{MomentusEventApi_HostAddress}}/api/events/search?filter=Conference
+Accept: application/json
+
+###
+
+# Search events with OData filter (for real Ungerboeck API)
+GET {{MomentusEventApi_HostAddress}}/api/events/search?filter=Description eq 'Tech Conference 2026'
+Accept: application/json
+
+###

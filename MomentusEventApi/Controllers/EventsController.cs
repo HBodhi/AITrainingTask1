@@ -66,4 +66,33 @@ public class EventsController : ControllerBase
             return StatusCode(500, "An error occurred while retrieving the event");
         }
     }
+
+    /// <summary>
+    /// Search for events using Ungerboeck search filter syntax
+    /// </summary>
+    /// <param name="filter">OData-style search filter (e.g., "Description eq 'Conference'")</param>
+    /// <returns>List of matching events</returns>
+    /// <remarks>
+    /// Examples of search filters:
+    /// - Description eq 'Tech Conference'
+    /// - Status eq '30'
+    /// - StartDate gt 2026-01-01
+    /// Leave empty to return all events
+    /// </remarks>
+    [HttpGet("search")]
+    [ProducesResponseType(typeof(IEnumerable<Event>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<ActionResult<IEnumerable<Event>>> SearchEvents([FromQuery] string? filter = null)
+    {
+        try
+        {
+            var events = await _eventService.SearchEventsAsync(filter ?? "");
+            return Ok(events);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error searching events with filter: {Filter}", filter);
+            return StatusCode(500, "An error occurred while searching events");
+        }
+    }
 }
