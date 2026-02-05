@@ -1,14 +1,9 @@
+using Ungerboeck.Api.Models.Subjects;
+
 namespace MomentusEventApi.Models;
 
-public class Event
+// Using EventsModel from Ungerboeck.Api.Models package
+// This provides the complete model structure for Ungerboeck/Momentus events
+public class Event : EventsModel
 {
-    public string Id { get; set; } = string.Empty;
-    public string Name { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
-    public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
-    public string Location { get; set; } = string.Empty;
-    public string Organizer { get; set; } = string.Empty;
-    public int Capacity { get; set; }
-    public decimal Price { get; set; }
 }

@@ -44,7 +44,7 @@ public class MomentusEventService : IMomentusEventService
             // In production: var response = await _httpClient.GetFromJsonAsync<Event>($"{_momentusApiBaseUrl}/events/{id}");
             
             var events = GetMockEvents();
-            return await Task.FromResult(events.FirstOrDefault(e => e.Id == id));
+            return await Task.FromResult(events.FirstOrDefault(e => e.EventID.ToString() == id));
         }
         catch (Exception ex)
         {
@@ -55,44 +55,71 @@ public class MomentusEventService : IMomentusEventService
 
     private IEnumerable<Event> GetMockEvents()
     {
-        // Mock data simulating Momentus event data
+        // Mock data simulating Momentus event data using EventsModel structure
         return new List<Event>
         {
             new Event
             {
-                Id = "1",
-                Name = "Tech Conference 2026",
-                Description = "Annual technology conference featuring the latest innovations",
+                EventID = 1,
+                Organization = "10",
+                Description = "Tech Conference 2026",
+                Account = "TECHCONF",
                 StartDate = new DateTime(2026, 6, 15, 9, 0, 0),
                 EndDate = new DateTime(2026, 6, 17, 18, 0, 0),
-                Location = "San Francisco, CA",
-                Organizer = "Tech Events Inc",
-                Capacity = 500,
-                Price = 299.99m
+                StartTime = new DateTime(2026, 6, 15, 9, 0, 0),
+                EndTime = new DateTime(2026, 6, 17, 18, 0, 0),
+                Status = "30", // Firm status
+                Type = "EDU",
+                Category = "CO",
+                Attendance = 500,
+                ForecastAttendance = 500,
+                ForecastRevenue = 299990,
+                Description1 = "Annual technology conference featuring the latest innovations",
+                Description2 = "San Francisco, CA",
+                Coordinator = "TECHCOORD",
+                Contact = "TECHCONT"
             },
             new Event
             {
-                Id = "2",
-                Name = "Music Festival 2026",
-                Description = "Three-day outdoor music festival with top artists",
+                EventID = 2,
+                Organization = "10",
+                Description = "Music Festival 2026",
+                Account = "MUSICFEST",
                 StartDate = new DateTime(2026, 7, 20, 12, 0, 0),
                 EndDate = new DateTime(2026, 7, 22, 23, 0, 0),
-                Location = "Austin, TX",
-                Organizer = "Music Events Co",
-                Capacity = 10000,
-                Price = 149.99m
+                StartTime = new DateTime(2026, 7, 20, 12, 0, 0),
+                EndTime = new DateTime(2026, 7, 22, 23, 0, 0),
+                Status = "30",
+                Type = "ENT",
+                Category = "MU",
+                Attendance = 10000,
+                ForecastAttendance = 10000,
+                ForecastRevenue = 1499900,
+                Description1 = "Three-day outdoor music festival with top artists",
+                Description2 = "Austin, TX",
+                Coordinator = "MUSICCOORD",
+                Contact = "MUSICCONT"
             },
             new Event
             {
-                Id = "3",
-                Name = "Business Summit",
-                Description = "Executive business summit for industry leaders",
+                EventID = 3,
+                Organization = "10",
+                Description = "Business Summit",
+                Account = "BIZSUMMIT",
                 StartDate = new DateTime(2026, 9, 10, 8, 0, 0),
                 EndDate = new DateTime(2026, 9, 11, 17, 0, 0),
-                Location = "New York, NY",
-                Organizer = "Business Networks",
-                Capacity = 200,
-                Price = 499.99m
+                StartTime = new DateTime(2026, 9, 10, 8, 0, 0),
+                EndTime = new DateTime(2026, 9, 11, 17, 0, 0),
+                Status = "30",
+                Type = "EDU",
+                Category = "BU",
+                Attendance = 200,
+                ForecastAttendance = 200,
+                ForecastRevenue = 99998,
+                Description1 = "Executive business summit for industry leaders",
+                Description2 = "New York, NY",
+                Coordinator = "BIZCOORD",
+                Contact = "BIZCONT"
             }
         };
     }
