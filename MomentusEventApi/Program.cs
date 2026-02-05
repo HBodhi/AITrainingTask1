@@ -5,8 +5,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
-// Register HttpClient for Momentus API
-builder.Services.AddHttpClient<IMomentusEventService, MomentusEventService>();
+// Register Ungerboeck API Client Factory
+builder.Services.AddSingleton<IUngerboeckApiClientFactory, UngerboeckApiClientFactory>();
+
+// Register Momentus Event Service
+builder.Services.AddScoped<IMomentusEventService, MomentusEventService>();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
