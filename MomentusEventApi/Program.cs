@@ -11,6 +11,9 @@ builder.Services.AddSingleton<IUngerboeckApiClientFactory, UngerboeckApiClientFa
 // Register Momentus Event Service
 builder.Services.AddScoped<IMomentusEventService, MomentusEventService>();
 
+// Register Service Order Service
+builder.Services.AddScoped<IServiceOrderService, ServiceOrderService>();
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
