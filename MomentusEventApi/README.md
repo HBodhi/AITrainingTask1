@@ -1,15 +1,16 @@
 # Momentus Event API
 
-A .NET 10 Web API that fetches event details from Momentus.
+A .NET 10 Web API that fetches event details from Momentus (formerly Ungerboeck).
 
 ## Overview
 
-This API provides endpoints to retrieve event information from the Momentus platform. It includes endpoints to fetch all events or specific events by ID.
+This API provides endpoints to retrieve event information from the Momentus platform. It includes endpoints to fetch all events or specific events by ID. The API uses the official `Ungerboeck.Api.Models` NuGet package for event model definitions.
 
 ## Technology Stack
 
 - .NET 10
 - ASP.NET Core Web API
+- Ungerboeck.Api.Models (v1.253.1.4)
 - OpenAPI/Swagger support
 
 ## Project Structure
@@ -19,13 +20,34 @@ MomentusEventApi/
 ├── Controllers/
 │   └── EventsController.cs      # API endpoints
 ├── Models/
-│   └── Event.cs                  # Event model
+│   └── Event.cs                  # Event model (extends EventsModel from Ungerboeck.Api.Models)
 ├── Services/
 │   ├── IMomentusEventService.cs  # Service interface
 │   └── MomentusEventService.cs   # Service implementation
 ├── Program.cs                     # Application entry point
 └── appsettings.json              # Configuration
 ```
+
+## Event Model
+
+The Event model inherits from `Ungerboeck.Api.Models.Subjects.EventsModel`, providing full compatibility with the Momentus/Ungerboeck API. Key properties include:
+
+- **EventID** (int?): Unique event identifier
+- **Organization** (string): Organization code
+- **Description** (string): Event name/description
+- **StartDate/EndDate** (DateTime?): Event dates
+- **StartTime/EndTime** (DateTime?): Event times
+- **Account** (string): Account code
+- **Status** (string): Event status code
+- **Type** (string): Event type code
+- **Category** (string): Event category code
+- **Attendance** (int?): Expected attendance
+- **ForecastRevenue** (int?): Forecasted revenue
+- **Coordinator** (string): Coordinator account code
+- **Contact** (string): Contact account code
+- And many more properties as defined in the Ungerboeck.Api.Models package
+
+For a complete list of properties, refer to the [Ungerboeck.Api.Models NuGet package](https://www.nuget.org/packages/Ungerboeck.Api.Models/).
 
 ## API Endpoints
 
@@ -39,15 +61,24 @@ Returns a list of all events from Momentus.
 ```json
 [
   {
-    "id": "1",
-    "name": "Tech Conference 2026",
-    "description": "Annual technology conference featuring the latest innovations",
+    "eventID": 1,
+    "organization": "10",
+    "description": "Tech Conference 2026",
     "startDate": "2026-06-15T09:00:00",
     "endDate": "2026-06-17T18:00:00",
-    "location": "San Francisco, CA",
-    "organizer": "Tech Events Inc",
-    "capacity": 500,
-    "price": 299.99
+    "startTime": "2026-06-15T09:00:00",
+    "endTime": "2026-06-17T18:00:00",
+    "status": "30",
+    "type": "EDU",
+    "category": "CO",
+    "account": "TECHCONF",
+    "attendance": 500,
+    "forecastAttendance": 500,
+    "forecastRevenue": 299990,
+    "description1": "Annual technology conference featuring the latest innovations",
+    "description2": "San Francisco, CA",
+    "coordinator": "TECHCOORD",
+    "contact": "TECHCONT"
   }
 ]
 ```
@@ -64,15 +95,24 @@ Returns details for a specific event.
 **Response:** 200 OK
 ```json
 {
-  "id": "1",
-  "name": "Tech Conference 2026",
-  "description": "Annual technology conference featuring the latest innovations",
+  "eventID": 1,
+  "organization": "10",
+  "description": "Tech Conference 2026",
   "startDate": "2026-06-15T09:00:00",
   "endDate": "2026-06-17T18:00:00",
-  "location": "San Francisco, CA",
-  "organizer": "Tech Events Inc",
-  "capacity": 500,
-  "price": 299.99
+  "startTime": "2026-06-15T09:00:00",
+  "endTime": "2026-06-17T18:00:00",
+  "status": "30",
+  "type": "EDU",
+  "category": "CO",
+  "account": "TECHCONF",
+  "attendance": 500,
+  "forecastAttendance": 500,
+  "forecastRevenue": 299990,
+  "description1": "Annual technology conference featuring the latest innovations",
+  "description2": "San Francisco, CA",
+  "coordinator": "TECHCOORD",
+  "contact": "TECHCONT"
 }
 ```
 
@@ -130,7 +170,23 @@ The Momentus API configuration can be found in `appsettings.json`:
 **Note:** The current implementation uses mock data for demonstration purposes. To connect to the actual Momentus API:
 1. Add your Momentus API key to the configuration
 2. Update the `MomentusEventService.cs` to uncomment the actual API calls
-3. Replace the mock data methods with real API integration
+3. Ensure you're using the correct version of Ungerboeck.Api.Models that matches your Momentus/Ungerboeck system version
+
+### Ungerboeck.Api.Models Version Compatibility
+
+This project uses **Ungerboeck.Api.Models v1.253.1.4**, which is compatible with Momentus/Ungerboeck version 25.3. The version number format is `1.XXX.Y.Z` where:
+- **XXX** represents the Ungerboeck/Momentus version (253 = version 25.3)
+- **Y.Z** represents the package build number
+
+**Important:** Always match your model package version to your Momentus/Ungerboeck API environment version to ensure compatibility. For example:
+- Version 1.231.x.x → Ungerboeck 23.1
+- Version 1.241.x.x → Ungerboeck 24.1  
+- Version 1.253.x.x → Ungerboeck 25.3
+
+To update the package version:
+```bash
+dotnet add package Ungerboeck.Api.Models --version [your-version]
+```
 
 ## Development
 

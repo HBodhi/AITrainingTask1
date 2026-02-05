@@ -1,30 +1,36 @@
 # Project Summary: Momentus Event API
 
 ## Overview
-Successfully created a .NET 10 Web API project that fetches event details from Momentus.
+Successfully created a .NET 10 Web API project that fetches event details from Momentus (formerly Ungerboeck). The API uses the official Ungerboeck.Api.Models NuGet package for full compatibility with the Momentus/Ungerboeck platform.
 
 ## What Was Implemented
 
 ### 1. Project Structure
 - Created a new ASP.NET Core Web API project targeting .NET 10.0
+- Integrated with Ungerboeck.Api.Models NuGet package (v1.253.1.4)
 - Organized code with clear separation of concerns:
   - `/Controllers` - API endpoint controllers
-  - `/Models` - Data models
+  - `/Models` - Data models (extends EventsModel from Ungerboeck.Api.Models)
   - `/Services` - Business logic and external API integration
 
 ### 2. Core Components
 
 #### Event Model (`Models/Event.cs`)
-- Comprehensive event data structure with fields for:
-  - ID, Name, Description
-  - Start/End dates
-  - Location, Organizer
-  - Capacity and Price
+- Inherits from `Ungerboeck.Api.Models.Subjects.EventsModel`
+- Provides full Momentus/Ungerboeck API compatibility
+- Includes all standard properties:
+  - EventID, Organization, Description
+  - StartDate, EndDate, StartTime, EndTime
+  - Account, Status, Type, Category
+  - Attendance, ForecastRevenue
+  - Coordinator, Contact
+  - And 100+ additional properties from the Ungerboeck model
 
 #### Service Layer
 - `IMomentusEventService` - Service interface defining contract
 - `MomentusEventService` - Implementation with HttpClient for API calls
 - Configured with dependency injection for testability and maintainability
+- Uses EventsModel structure for data representation
 
 #### API Controller (`Controllers/EventsController.cs`)
 - Two RESTful endpoints:
@@ -34,6 +40,10 @@ Successfully created a .NET 10 Web API project that fetches event details from M
 - HTTP status codes (200 OK, 404 Not Found, 500 Internal Server Error)
 
 ### 3. Configuration & Setup
+
+#### NuGet Packages
+- **Ungerboeck.Api.Models v1.253.1.4** - Official Momentus/Ungerboeck model definitions
+- **Microsoft.AspNetCore.OpenApi v10.0.2** - OpenAPI support
 
 #### appsettings.json
 - Configured Momentus API base URL
@@ -84,6 +94,7 @@ The API is fully functional with mock data. The implementation structure is prod
 ## Technology Stack
 - .NET 10.0
 - ASP.NET Core Web API
+- **Ungerboeck.Api.Models v1.253.1.4** - Official Momentus/Ungerboeck models
 - Built-in dependency injection
 - HttpClient for external API calls
 - OpenAPI 3.1 specification
@@ -91,21 +102,23 @@ The API is fully functional with mock data. The implementation structure is prod
 
 ## Key Features
 - ✅ Clean architecture with separation of concerns
+- ✅ **Official Ungerboeck.Api.Models integration** for full API compatibility
 - ✅ Dependency injection for testability
 - ✅ Comprehensive logging
 - ✅ Error handling and appropriate HTTP responses
 - ✅ CORS support
 - ✅ OpenAPI documentation
 - ✅ Ready for production with minimal configuration
+- ✅ Version-matched model package (v25.3 compatible)
 
 ## Files Created/Modified
 1. `.gitignore` - .NET project exclusions
 2. `MomentusEventApi/` - Complete Web API project
-   - `MomentusEventApi.csproj` - Project file
+   - `MomentusEventApi.csproj` - Project file with Ungerboeck.Api.Models reference
    - `Program.cs` - Application entry point
    - `appsettings.json` - Configuration
    - `Controllers/EventsController.cs` - API endpoints
-   - `Models/Event.cs` - Event data model
+   - `Models/Event.cs` - Event data model (extends EventsModel)
    - `Services/IMomentusEventService.cs` - Service interface
    - `Services/MomentusEventService.cs` - Service implementation
    - `README.md` - Complete documentation
