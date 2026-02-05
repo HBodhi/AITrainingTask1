@@ -356,18 +356,3 @@ If searches return no events:
 ## License
 
 This project is part of the AITrainingTask1 repository.
-
-```bash
-# Get all events
-curl http://localhost:5001/api/events
-
-# Get specific event
-curl http://localhost:5001/api/events/1
-
-# Search events
-curl "http://localhost:5001/api/events/search?filter=Conference"
-```
-
-## License
-
-This project is part of the AITrainingTask1 repository.

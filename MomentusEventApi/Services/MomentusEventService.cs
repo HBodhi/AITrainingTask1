@@ -60,32 +60,7 @@ public class MomentusEventService : IMomentusEventService
             }
             
             // Convert EventsModel to Event (our wrapper class)
-            return searchResponse.Results.Select(e => new Event
-            {
-                EventID = e.EventID,
-                Organization = e.Organization,
-                Description = e.Description,
-                Account = e.Account,
-                StartDate = e.StartDate,
-                EndDate = e.EndDate,
-                StartTime = e.StartTime,
-                EndTime = e.EndTime,
-                Status = e.Status,
-                Type = e.Type,
-                Category = e.Category,
-                Attendance = e.Attendance,
-                ForecastAttendance = e.ForecastAttendance,
-                ForecastRevenue = e.ForecastRevenue,
-                Description1 = e.Description1,
-                Description2 = e.Description2,
-                Coordinator = e.Coordinator,
-                Contact = e.Contact,
-                Class = e.Class,
-                Salesperson = e.Salesperson,
-                ActualRevenue = e.ActualRevenue,
-                OrderedRevenue = e.OrderedRevenue,
-                RevisedRevenue = e.RevisedRevenue
-            }).ToList();
+            return searchResponse.Results.Select(MapToEvent).ToList();
         }
         catch (Exception ex)
         {
@@ -123,46 +98,7 @@ public class MomentusEventService : IMomentusEventService
             _logger.LogInformation("Retrieved event {EventId}: {Description}", id, eventModel.Description);
             
             // Convert EventsModel to Event
-            return new Event
-            {
-                EventID = eventModel.EventID,
-                Organization = eventModel.Organization,
-                Description = eventModel.Description,
-                Account = eventModel.Account,
-                StartDate = eventModel.StartDate,
-                EndDate = eventModel.EndDate,
-                StartTime = eventModel.StartTime,
-                EndTime = eventModel.EndTime,
-                Status = eventModel.Status,
-                Type = eventModel.Type,
-                Category = eventModel.Category,
-                Attendance = eventModel.Attendance,
-                ForecastAttendance = eventModel.ForecastAttendance,
-                ForecastRevenue = eventModel.ForecastRevenue,
-                Description1 = eventModel.Description1,
-                Description2 = eventModel.Description2,
-                Coordinator = eventModel.Coordinator,
-                Contact = eventModel.Contact,
-                Class = eventModel.Class,
-                Salesperson = eventModel.Salesperson,
-                ActualRevenue = eventModel.ActualRevenue,
-                OrderedRevenue = eventModel.OrderedRevenue,
-                RevisedRevenue = eventModel.RevisedRevenue,
-                // Include additional commonly used fields
-                ParentEvent = eventModel.ParentEvent,
-                PreviousEvent = eventModel.PreviousEvent,
-                AlternateEvent = eventModel.AlternateEvent,
-                Abbreviation = eventModel.Abbreviation,
-                LegalName = eventModel.LegalName,
-                WebAddress = eventModel.WebAddress,
-                Public = eventModel.Public,
-                BoxOffice = eventModel.BoxOffice,
-                InDate = eventModel.InDate,
-                OutDate = eventModel.OutDate,
-                InTime = eventModel.InTime,
-                OutTime = eventModel.OutTime,
-                EventUserFieldSets = eventModel.EventUserFieldSets
-            };
+            return MapToEvent(eventModel);
         }
         catch (Exception ex)
         {
@@ -212,38 +148,60 @@ public class MomentusEventService : IMomentusEventService
             }
             
             // Convert EventsModel to Event (our wrapper class)
-            return searchResponse.Results.Select(e => new Event
-            {
-                EventID = e.EventID,
-                Organization = e.Organization,
-                Description = e.Description,
-                Account = e.Account,
-                StartDate = e.StartDate,
-                EndDate = e.EndDate,
-                StartTime = e.StartTime,
-                EndTime = e.EndTime,
-                Status = e.Status,
-                Type = e.Type,
-                Category = e.Category,
-                Attendance = e.Attendance,
-                ForecastAttendance = e.ForecastAttendance,
-                ForecastRevenue = e.ForecastRevenue,
-                Description1 = e.Description1,
-                Description2 = e.Description2,
-                Coordinator = e.Coordinator,
-                Contact = e.Contact,
-                Class = e.Class,
-                Salesperson = e.Salesperson,
-                ActualRevenue = e.ActualRevenue,
-                OrderedRevenue = e.OrderedRevenue,
-                RevisedRevenue = e.RevisedRevenue
-            }).ToList();
+            return searchResponse.Results.Select(MapToEvent).ToList();
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error searching events from Ungerboeck API");
             throw;
         }
+    }
+
+    /// <summary>
+    /// Maps an EventsModel from the SDK to our Event wrapper class
+    /// </summary>
+    private static Event MapToEvent(Ungerboeck.Api.Models.Subjects.EventsModel eventModel)
+    {
+        return new Event
+        {
+            EventID = eventModel.EventID,
+            Organization = eventModel.Organization,
+            Description = eventModel.Description,
+            Account = eventModel.Account,
+            StartDate = eventModel.StartDate,
+            EndDate = eventModel.EndDate,
+            StartTime = eventModel.StartTime,
+            EndTime = eventModel.EndTime,
+            Status = eventModel.Status,
+            Type = eventModel.Type,
+            Category = eventModel.Category,
+            Attendance = eventModel.Attendance,
+            ForecastAttendance = eventModel.ForecastAttendance,
+            ForecastRevenue = eventModel.ForecastRevenue,
+            Description1 = eventModel.Description1,
+            Description2 = eventModel.Description2,
+            Coordinator = eventModel.Coordinator,
+            Contact = eventModel.Contact,
+            Class = eventModel.Class,
+            Salesperson = eventModel.Salesperson,
+            ActualRevenue = eventModel.ActualRevenue,
+            OrderedRevenue = eventModel.OrderedRevenue,
+            RevisedRevenue = eventModel.RevisedRevenue,
+            // Include additional commonly used fields
+            ParentEvent = eventModel.ParentEvent,
+            PreviousEvent = eventModel.PreviousEvent,
+            AlternateEvent = eventModel.AlternateEvent,
+            Abbreviation = eventModel.Abbreviation,
+            LegalName = eventModel.LegalName,
+            WebAddress = eventModel.WebAddress,
+            Public = eventModel.Public,
+            BoxOffice = eventModel.BoxOffice,
+            InDate = eventModel.InDate,
+            OutDate = eventModel.OutDate,
+            InTime = eventModel.InTime,
+            OutTime = eventModel.OutTime,
+            EventUserFieldSets = eventModel.EventUserFieldSets
+        };
     }
 
     private IEnumerable<Event> GetMockEvents()
