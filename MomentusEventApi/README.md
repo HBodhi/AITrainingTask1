@@ -54,7 +54,21 @@ The Event model inherits from `Ungerboeck.Api.Models.Subjects.EventsModel`, prov
 
 For a complete list of properties, refer to the [Ungerboeck.Api.Models NuGet package](https://www.nuget.org/packages/Ungerboeck.Api.Models/).
 
-## API Endpoints
+## API Endpoints Overview
+
+The API provides two main resource types:
+
+1. **Events** - Event management and search
+   - GET /api/events - List all events
+   - GET /api/events/{id} - Get event by ID
+   - GET /api/events/search - Search events with filters
+
+2. **Service Orders** - Service order management and search
+   - GET /api/serviceorders/event/{eventId} - Get orders for an event
+   - GET /api/serviceorders/{orderNumber} - Get order by number
+   - GET /api/serviceorders/search - Search orders with filters
+
+## Event Endpoints
 
 ### Get All Events
 ```
@@ -143,6 +157,90 @@ Search for events using Ungerboeck OData-style search filter syntax.
     "eventID": 1,
     "organization": "10",
     "description": "Tech Conference 2026",
+    ...
+  }
+]
+```
+
+## Service Order Endpoints
+
+### Get Service Orders by Event
+```
+GET /api/serviceorders/event/{eventId}
+```
+Returns all service orders for a specific event.
+
+**Parameters:**
+- `eventId` (int): The event ID
+
+**Response:** 200 OK
+```json
+[
+  {
+    "organizationCode": "10",
+    "orderNumber": 1001,
+    "orderSearch": "AV Equipment Setup",
+    "event": 1,
+    "orderDate": "2026-06-01T00:00:00",
+    "orderStatus": "A",
+    "account": "TECHCONF",
+    "function": 101,
+    "billToAccount": "TECHCONF",
+    "contact": "TECHCONT",
+    "category": 1
+  }
+]
+```
+
+### Get Service Order by Order Number
+```
+GET /api/serviceorders/{orderNumber}
+```
+Returns details for a specific service order.
+
+**Parameters:**
+- `orderNumber` (int): The order number
+
+**Response:** 200 OK
+```json
+{
+  "organizationCode": "10",
+  "orderNumber": 1001,
+  "orderSearch": "AV Equipment Setup",
+  "event": 1,
+  "orderDate": "2026-06-01T00:00:00",
+  "orderStatus": "A",
+  "account": "TECHCONF",
+  "function": 101,
+  "billToAccount": "TECHCONF"
+}
+```
+
+### Search Service Orders
+```
+GET /api/serviceorders/search?filter={searchFilter}
+```
+Search for service orders using Ungerboeck OData-style search filter syntax.
+
+**Parameters:**
+- `filter` (string, optional): OData-style search filter
+
+**Filter Examples:**
+- `Account eq 'TECHCONF'` - Orders for specific account
+- `OrderStatus eq 'A'` - Active orders
+- `Event eq 1` - Orders for specific event
+- `OrderDate gt 2026-01-01` - Orders after a date
+- Leave empty to return all orders
+
+**Response:** 200 OK
+```json
+[
+  {
+    "organizationCode": "10",
+    "orderNumber": 1001,
+    "orderSearch": "AV Equipment Setup",
+    "event": 1,
+    "account": "TECHCONF",
     ...
   }
 ]
